@@ -1,0 +1,72 @@
+on:
+  push:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./app
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+
+    steps:
+      - name: Checkout Repository 🫠
+        uses: actions/checkout@v4
+#      - name: Install Deps and Run Tests
+#        id: test
+#        uses: ./.github/actions/install-dependencies
+#        with:
+#          npm-token: ${NPM_TOKEN}
+      - run: npm install
+      - run: npm run jest -- --coverage --testPathIgnorePatterns=playwright
+      - name: Coveralls
+        if: always()
+        uses: coverallsapp/github-action@v2
+
+      - name: List report files
+        continue-on-error: true
+        run: |
+          pwd
+          ls -la coverage
+
+      - name: Stash coverage data for the Qodana Scan later
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: coverage-data-jest
+          path: |
+            app/coverage/lcov.info
+            app/coverage/clover.xml
+          if-no-files-found: error
+
+      - name: Copy Jest report file
+        continue-on-error: true
+        run: |
+          mkdir -p ../.qodana/code-coverage
+          cp coverage/lcov.info ../.qodana/code-coverage/
+          cp coverage/clover.xml ../.qodana/code-coverage/
+
+      - name: List directory contents
+        continue-on-error: true
+        run: |
+          pwd
+          ls -la ../.qodana/code-coverage
+          
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2024.1
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        with:
+          pr-mode: false
+          push-fixes: pull-request
+          use-annotations: false
+          upload-result: true
+          primary-cache-key: qodana-2024.1-js-${{ github.ref }}
+          additional-cache-key: qodana-2024.1-js
