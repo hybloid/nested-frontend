@@ -49,15 +49,15 @@ jobs:
       - name: Copy Jest report file
         continue-on-error: true
         run: |
-          mkdir -p ../.qodana/code-coverage
-          cp coverage/lcov.info ../.qodana/code-coverage/
-          cp coverage/clover.xml ../.qodana/code-coverage/
+          mkdir -p ./.qodana/code-coverage
+          cp coverage/lcov.info ./.qodana/code-coverage/
+          cp coverage/clover.xml ./.qodana/code-coverage/
 
       - name: List directory contents
         continue-on-error: true
         run: |
           pwd
-          ls -la ../.qodana/code-coverage
+          ls -la ./.qodana/code-coverage
           
 
       - name: Qodana Scan
