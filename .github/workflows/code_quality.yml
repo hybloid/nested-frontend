@@ -49,25 +49,22 @@ jobs:
       - name: Copy Jest report file
         continue-on-error: true
         run: |
-          mkdir -p ./.qodana/code-coverage
-          cp coverage/lcov.info ./.qodana/code-coverage/
-          cp coverage/clover.xml ./.qodana/code-coverage/
+          mkdir -p ${{GITHUB_WORKSPACE}}/.qodana/code-coverage
+          cp coverage/lcov.info ${{GITHUB_WORKSPACE}}/.qodana/code-coverage/
+          cp coverage/clover.xml ${{GITHUB_WORKSPACE}}/.qodana/code-coverage/
 
       - name: List directory contents
         continue-on-error: true
         run: |
-          pwd
-          ls -la ./.qodana/code-coverage
-          
-
+          ls -la ${{GITHUB_WORKSPACE}}/.qodana/code-coverage
+  
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2024.1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
-          args: -i,app
           pr-mode: false
-          # push-fixes: pull-request
+          push-fixes: pull-request
           use-annotations: false
           upload-result: true
           primary-cache-key: qodana-2024.1-js-${{ github.ref }}
