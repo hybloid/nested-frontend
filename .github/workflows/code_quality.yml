@@ -65,6 +65,7 @@ jobs:
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
+          args: -i,app
           pr-mode: false
           # push-fixes: pull-request
           use-annotations: false
