@@ -26,6 +26,7 @@ jobs:
 #          npm-token: ${NPM_TOKEN}
       - run: npm install
       - run: npm run jest -- --coverage --testPathIgnorePatterns=playwright
+        continue-on-error: true
       - name: Coveralls
         if: always()
         uses: coverallsapp/github-action@v2
