@@ -20,11 +20,6 @@ jobs:
     steps:
       - name: Checkout Repository 🫠
         uses: actions/checkout@v4
-      - name: Install Deps and Run Tests
-        id: test
-        uses: ./.github/actions/install-dependencies
-        with:
-          npm-token: ${NPM_TOKEN}
       - run: npm install
       - run: npm run jest -- --coverage --testPathIgnorePatterns=playwright
         continue-on-error: true
